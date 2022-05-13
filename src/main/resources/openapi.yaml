@@ -1,0 +1,150 @@
+openapi: "3.0.2"
+info:
+  title: API Ajmanre
+  version: "1.0"
+servers:
+  - url: http://localhost:{port}
+    description: The production API server
+    variables:
+      port:
+        enum:
+          - '8443'
+          - '443'
+        default: '8443'
+tags:
+  - name: Ajmanre
+    description: Ajmanre.
+paths:
+  /auth/signin:
+    post:
+      tags:
+        - "signin"
+      summary: "signin"
+      description: "signin"
+      operationId: "signin"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: "JWT response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JwtResponse"
+        "405":
+          description: "Invalid input"
+  /auth/signup:
+    post:
+      tags:
+        - "signup"
+      summary: "signup"
+      description: "signup"
+      operationId: "signup"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignupRequest"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "405":
+          description: "Invalid input"
+components:
+  schemas:
+    LoginRequest:
+      type: "object"
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: "string"
+          description: "Username"
+        password:
+          type: "string"
+          description: "Password"
+    JwtResponse:
+      type: "object"
+      properties:
+        accessToken:
+          type: "string"
+          description: "token"
+        type:
+          type: "string"
+          description: "type"
+        id:
+          type: "string"
+          description: "id"
+        username:
+          type: "string"
+          description: "Username"
+        email:
+          type: "string"
+          description: "email"
+        roles:
+          type: "array"
+          description: "roles"
+          items:
+            type: string
+          example: ['admin', 'agent', 'user']
+    SignupRequest:
+      type: "object"
+      required:
+        - username
+        - password
+        - email
+      properties:
+        username:
+          type: "string"
+          description: "Username"
+        password:
+          type: "string"
+          description: "Password"
+        email:
+          type: "string"
+          description: "email"
+        roles:
+          type: "array"
+          description: "roles"
+          items:
+            type: string
+          example: ['admin', 'agent', 'user']
+    MessageResponse:
+      type: "object"
+      required:
+        - message
+      properties:
+        message:
+          type: "string"
+          description: "Message"
+    Property:
+      type: "object"
+      required:
+        - id
+        - identifier
+        - summary
+        - status
+        - type
+      properties:
+        id:
+          type: "string"
+          description: "id"
+        id:
+          type: "string"
+          description: "id"
+        id:
+          type: "string"
+          description: "id"
+        id:
+          type: "string"
+          description: "id"
