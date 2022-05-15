@@ -59,6 +59,44 @@ paths:
                 $ref: "#/components/schemas/MessageResponse"
         "405":
           description: "Invalid input"
+  /prop/type:
+    post:
+      tags:
+        - "propType"
+      summary: "property type"
+      operationId: "propType"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PropertyTypeRequest"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "405":
+          description: "Invalid input"
+  /prop/type/hierarchy:
+    get:
+      tags:
+        - "propTypeHierarchy"
+      summary: "property type hierarchy"
+      operationId: "propTypeHierarchy"
+      responses:
+        "200":
+          description: "property type hierarchy"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PropertyTypeHierarchy"
+        "405":
+          description: "Invalid input"
 components:
   schemas:
     LoginRequest:
@@ -127,24 +165,91 @@ components:
         message:
           type: "string"
           description: "Message"
-    Property:
+        identifier:
+          type: "string"
+          description: "If identifier has to be in response"
+    PropertyTypeRequest:
       type: "object"
       required:
-        - id
-        - identifier
-        - summary
-        - status
         - type
+        - order
       properties:
         id:
           type: "string"
-          description: "id"
+          description: "hierarchy id"
+        type:
+          type: "string"
+          description: "type of the property"
+        order:
+          type: "integer"
+          description: "order list on this value"
+        child:
+          $ref: "#/components/schemas/PropertyTypeChild"
+    PropertyTypeChild:
+      type: "object"
+      required:
+        - type
+        - order
+      properties:
+        type:
+          type: "string"
+          description: "type of the property"
+        order:
+          type: "integer"
+          description: "order list on this value"
+        child:
+          $ref: "#/components/schemas/PropertyTypeChild"
+    PropertyType:
+      type: "object"
+      required:
+        - id
+        - enable
+        - type
+        - order
+      properties:
         id:
           type: "string"
-          description: "id"
-        id:
+        enable:
+          type: "boolean"
+        type:
           type: "string"
-          description: "id"
-        id:
+          description: "type of the property"
+        order:
+          type: "integer"
+          description: "order list on this value"
+        child:
+          $ref: "#/components/schemas/PropertyTypeChild"
+    PropertyTypeHierarchy:
+      type: "object"
+      required:
+        - type
+        - order
+      properties:
+        type:
           type: "string"
-          description: "id"
+          description: "type of the property"
+        order:
+          type: "integer"
+          description: "order list on this value"
+        children:
+          type: "array"
+          description: "property type hierarchy"
+          items:
+            $ref: "#/components/schemas/PropertyTypeItem"
+    PropertyTypeItem:
+      type: "object"
+      required:
+        - type
+        - order
+      properties:
+        type:
+          type: "string"
+          description: "type of the property"
+        order:
+          type: "integer"
+          description: "order list on this value"
+        children:
+          type: "array"
+          description: "property type hierarchy"
+          items:
+            $ref: "#/components/schemas/PropertyTypeItem"
