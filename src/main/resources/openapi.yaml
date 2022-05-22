@@ -97,6 +97,83 @@ paths:
                   $ref: "#/components/schemas/PropertyTypeHierarchy"
         "405":
           description: "Invalid input"
+  /area:
+    post:
+      tags:
+        - "area"
+      summary: "area locality"
+      operationId: "areaPost"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AreaRequest"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /area/all:
+    get:
+      tags:
+        - "areaAll"
+      summary: "areas in emirate"
+      operationId: "areaAll"
+      responses:
+        "200":
+          description: "property type hierarchy"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Area"
+        "405":
+          description: "Invalid input"
+  /select:
+    post:
+      tags:
+        - "select"
+      summary: "select"
+      operationId: "selectPost"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SelectRequest"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /select/{list}:
+    get:
+      tags:
+        - "selectList"
+      summary: "selectList of values"
+      operationId: "selectList"
+      parameters:
+        - in: path
+          name : list
+          schema:
+            type: string
+          required: true
+          description: "select list type e.g. prop-status"
+      responses:
+        "200":
+          description: "property type hierarchy"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Select"
 components:
   schemas:
     LoginRequest:
@@ -256,3 +333,84 @@ components:
           description: "property type hierarchy"
           items:
             $ref: "#/components/schemas/PropertyTypeItem"
+    AreaRequest:
+      type: "object"
+      required:
+        - name
+        - emirate
+        - country
+      properties:
+        name:
+          type: "string"
+          description: "area in emirate"
+        locality:
+          type: "string"
+          description: "location"
+        emirate:
+          type: "string"
+          description: "emirate of UAE"
+        country:
+          type: "string"
+          description: "UAE country"
+    Area:
+      type: "object"
+      required:
+        - id
+        - name
+        - emirate
+        - country
+      properties:
+        id:
+          type: "string"
+          description: "id of area"
+        name:
+          type: "string"
+          description: "area in emirate"
+        locality:
+          type: "string"
+          description: "location"
+        emirate:
+          type: "string"
+          description: "emirate of UAE"
+        country:
+          type: "string"
+          description: "UAE country"
+    SelectRequest:
+      type: "object"
+      required:
+        - key
+        - value
+        - order
+        - type
+      properties:
+        key:
+          type: "string"
+        value:
+          type: "string"
+        order:
+          type: "integer"
+          description: "sorting order"
+        type:
+          type: "string"
+          description: "type for the list e.g. prop-status"
+    Select:
+      type: "object"
+      required:
+        - id
+        - key
+        - value
+        - order
+        - type
+      properties:
+        id:
+          type: "string"
+        key:
+          type: "string"
+        value:
+          type: "string"
+        order:
+          type: "integer"
+          description: "sorting order"
+        type:
+          type: "string"
+          description: "type for the list e.g. prop-status"
