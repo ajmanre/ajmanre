@@ -1,0 +1,179 @@
+paths:
+  /property:
+    post:
+      tags:
+        - "property post"
+      summary: "Post Property"
+      description: "Post Property"
+      operationId: "propertyPost"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PropertyRequest"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "405":
+          description: "Invalid input"
+
+components:
+  schemas:
+    PropType:
+      type: "object"
+      required:
+        - type
+      properties:
+        type:
+          type: "string"
+          description: "Type"
+        parent:
+          $ref: "#/components/schemas/PropType"
+    Property:
+      type: "object"
+      required:
+        - id
+        - identifier
+        - summary
+        - status
+        - type
+      properties:
+        id:
+          type: "string"
+          description: "id"
+        identifier:
+          type: "string"
+          description: "identifier"
+        summary:
+          type: "string"
+          description: "summary"
+        status:
+          type: "string"
+          description: "status"
+        type:
+          type: "string"
+          description: "type"
+        location:
+          type: "string"
+          description: "location"
+        sqFt:
+          type: "string"
+          description: "sqFt"
+        sqMt:
+          type: "string"
+          description: "sqMt"
+        owner:
+          type: "string"
+          description: "owner"
+        agent:
+          type: "string"
+          description: "agent"
+        project:
+          type: "string"
+          description: "project"
+        tel:
+          type: "string"
+          description: "tel"
+        features:
+          type: "array"
+          description: "features"
+          items:
+            type: string
+          example: [ 'example' ]
+        tags:
+          type: "array"
+          description: "tags"
+          items:
+            type: string
+          example: [ 'example' ]
+        ownerId:
+          type: "string"
+          description: "ownerId"
+        agentId:
+          type: "string"
+          description: "agentId"
+        projectId:
+          type: "string"
+          description: "projectId"
+        statusId:
+          type: "string"
+          description: "statusId"
+        typeId:
+          type: "string"
+          description: "typeId"
+    PropertyRequest:
+      type: "object"
+      required:
+        - summary
+        - status
+        - type
+      properties:
+        summary:
+          type: "string"
+          description: "summary"
+        status:
+          type: "string"
+          description: "status"
+        type:
+          type: "string"
+          description: "type"
+        location:
+          type: "string"
+          description: "location"
+        sqFt:
+          type: "string"
+          description: "sqFt"
+        sqMt:
+          type: "string"
+          description: "sqMt"
+        owner:
+          type: "string"
+          description: "owner"
+        agent:
+          type: "string"
+          description: "agent"
+        project:
+          type: "string"
+          description: "project"
+        tel:
+          type: "string"
+          description: "tel"
+        features:
+          type: "array"
+          description: "features"
+          items:
+            type: string
+          example: [ 'example' ]
+        tags:
+          type: "array"
+          description: "tags"
+          items:
+            type: string
+          example: [ 'example' ]
+        ownerId:
+          type: "string"
+          description: "ownerId"
+        agentId:
+          type: "string"
+          description: "agentId"
+        projectId:
+          type: "string"
+          description: "projectId"
+        statusId:
+          type: "string"
+          description: "statusId"
+        typeId:
+          type: "string"
+          description: "typeId"
+  requestBodies:
+    propertyPost:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/PropertyRequest"
