@@ -225,6 +225,9 @@ components:
         - type
         - order
       properties:
+        id:
+          type: "string"
+          description: "id of hierarchy"
         type:
           type: "string"
           description: "type of the property"

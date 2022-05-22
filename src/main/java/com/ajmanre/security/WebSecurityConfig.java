@@ -59,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 			.authorizeRequests().antMatchers("/auth/**").permitAll()
 			.antMatchers("/api/test/**", "/uploadfs/**", "/file/**", "/openapi.yaml",
-					"/openapi.json", "/redoc.html", "/swagger-ui/**").permitAll()
+					"/openapi.json", "/redoc.html", "/swagger-ui/**", "/reference/**").permitAll()
 			.anyRequest().authenticated();
 
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

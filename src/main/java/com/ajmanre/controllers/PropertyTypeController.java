@@ -1,6 +1,7 @@
 package com.ajmanre.controllers;
 
 import com.ajmanre.models.PropertyType;
+import com.ajmanre.repository.PropertyTypeRepository;
 import com.ajmanre.services.PropertyTypeService;
 import org.openapitools.api.PropApi;
 import org.openapitools.model.*;
@@ -10,8 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -21,36 +21,49 @@ public class PropertyTypeController implements PropApi{
     @Autowired
     PropertyTypeService propertyTypeService;
 
+    @Autowired
+    PropertyTypeRepository propertyTypeRepository;
+
     @Override
     public ResponseEntity<MessageResponse> propType(PropertyTypeRequest propertyTypeRequest) {
 
         PropertyType propertyType = null != propertyTypeRequest.getId() ?
-            propertyTypeService.get(propertyTypeRequest.getId()) : new PropertyType();
+                propertyTypeService.get(propertyTypeRequest.getId()) :
+                propertyTypeRepository.findByType(propertyTypeRequest.getType()).orElse(new PropertyType());
+
 
         propertyType.setType(propertyTypeRequest.getType());
         propertyType.setOrder(propertyTypeRequest.getOrder());
 
         PropertyTypeChild child = propertyTypeRequest.getChild();
         if(null != child) {
-            com.ajmanre.models.PropertyTypeChild propChild = new com.ajmanre.models.PropertyTypeChild();
-            propChild.setType(child.getType());
-            propChild.setOrder(child.getOrder());
-            propertyType.setChild(propChild);
+            if (null == propertyType.getChildren()) {
+                propertyType.setChildren(new ArrayList<>());
+            }
+            List<com.ajmanre.models.PropertyTypeChild> children = propertyType.getChildren();
+            com.ajmanre.models.PropertyTypeChild look = null;
 
-            // let propChild is parent of children
-            com.ajmanre.models.PropertyTypeChild parent = propChild;
-            child = child.getChild();
             while (null != child) {
-                com.ajmanre.models.PropertyTypeChild whilePropChild = new com.ajmanre.models.PropertyTypeChild();
-                whilePropChild.setType(child.getType());
-                whilePropChild.setOrder(child.getOrder());
-                parent.setChild(whilePropChild);
+                final String type = child.getType();
+                Optional<com.ajmanre.models.PropertyTypeChild> find =
+                        children.stream().filter(prpTypChld -> prpTypChld.getType().equals(type))
+                                .findFirst();
 
-                // let whilePropChild is parent of children
-                parent = whilePropChild;
+                if (find.isPresent()) {
+                    look = find.get();
+                    look.setOrder(child.getOrder());
+                } else {
+                    look = new com.ajmanre.models.PropertyTypeChild();
+                    look.setType(child.getType());
+                    look.setOrder(child.getOrder());
+                    children.add(look);
+                }
+                if (null != child.getChild() && look.getChildren() == null) {
+                    look.setChildren(new ArrayList<>());
+                    children = look.getChildren();
+                }
                 child = child.getChild();
             }
-
         }
 
         PropertyType saved = propertyTypeService.create(propertyType);
@@ -62,40 +75,42 @@ public class PropertyTypeController implements PropApi{
         );
     }
 
+    private List<PropertyTypeItem> trasform(List<com.ajmanre.models.PropertyTypeChild> childrn) {
+
+        List<PropertyTypeItem> children = new ArrayList<>();
+        for(com.ajmanre.models.PropertyTypeChild chld : childrn) {
+
+            PropertyTypeItem child = new PropertyTypeItem()
+                .type(chld.getType()).order(chld.getOrder());
+
+            if(chld.getChildren() != null && !chld.getChildren().isEmpty()) {
+                List<PropertyTypeItem> list = trasform(chld.getChildren());
+                child.setChildren(list);
+            }
+            children.add(child);
+        }
+
+        return children;
+    }
+
     @Override
     public ResponseEntity<List<PropertyTypeHierarchy>> propTypeHierarchy() {
 
-        List<PropertyTypeHierarchy> propTypeHierarchy = propertyTypeService.getPropTypes().entrySet()
-                .stream().map(entry -> {
-                    PropertyTypeHierarchy h = new PropertyTypeHierarchy();
-                    h.setType(entry.getKey());
-                    h.setOrder(entry.getValue().get(0).getOrder());
+        List<PropertyTypeHierarchy> propTypeHierarchy = propertyTypeRepository.findAll().stream().map(propType -> {
 
-                    List<PropertyTypeItem> children =  entry.getValue().stream().map(propertyType -> {
+            PropertyTypeHierarchy propH = new PropertyTypeHierarchy().id(propType.getId())
+                    .type(propType.getType()).order(propType.getOrder());
 
-                        com.ajmanre.models.PropertyTypeChild child = propertyType.getChild();
-                        PropertyTypeItem propertyTypeItem = new PropertyTypeItem().type(child.getType())
-                                .order(child.getOrder());
-
-                        PropertyTypeItem parent = propertyTypeItem;
-                        com.ajmanre.models.PropertyTypeChild nextChild  = child.getChild();
-                        while(null != nextChild) {
-                            PropertyTypeItem nextChildPropertyTypeItem = new PropertyTypeItem()
-                                    .type(nextChild.getType()).order(nextChild.getOrder());
-                            parent.setChildren(Arrays.asList(nextChildPropertyTypeItem));
-
-                            parent = nextChildPropertyTypeItem;
-                            nextChild  = nextChild.getChild();
-                        }
-
-                        return propertyTypeItem;
-                    }).collect(Collectors.toList());
-                    h.setChildren(children);
-                    return h;
-                }).collect(Collectors.toList());
+            if(null != propType.getChildren() && !propType.getChildren().isEmpty()) {
+                List<com.ajmanre.models.PropertyTypeChild> childrn = propType.getChildren();
+                List<PropertyTypeItem> children = trasform(childrn);
+                propH.setChildren(children);
+            }
+            return propH;
+        }).collect(Collectors.toList());
 
         return ResponseEntity.ok(propTypeHierarchy);
-    }
+    };
 
     /*@Override
     public ResponseEntity<MessageResponse> propType(PropertyTypeRequest propertyTypeRequest) {
