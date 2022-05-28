@@ -147,7 +147,7 @@ public class ReferenceController {
                 String locality = null == row[0] ? null : (String) row[0];
                 String areaStr = (String) row[1];
                 org.openapitools.model.AreaRequest areReq = new org.openapitools.model.
-                        AreaRequest().locality(locality).name(areaStr).emirate("Ajman").emirate("United Arab Emirates");
+                        AreaRequest().locality(locality).name(areaStr).emirate("Ajman").country("United Arab Emirates");
 
                 return areReq;
             }).forEach(areaRequest -> {

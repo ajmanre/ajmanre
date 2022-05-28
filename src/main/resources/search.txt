@@ -1,0 +1,5 @@
+http://localhost:8443/reference/property/types?key=REF_PRP_TYP
+
+http://localhost:8443/reference/select/init?key=REF_SEL
+
+http://localhost:8443/reference/area/init?key=REF_AREA

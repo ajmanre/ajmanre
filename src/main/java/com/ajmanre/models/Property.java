@@ -8,17 +8,34 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @Setter
-@Document(collection = "roles")
+@Document(collection = "properties")
 public class Property {
 
     @Id
     private String id;
 
+    @NotNull
+    private LocalDateTime updatedAt;
+
+    @NotBlank
+    @Size(max = 32)
     private String identifier;
+
+    @NotBlank
+    @Size(max = 24)
+    private String status;
+    private String statusId;
+
+    @NotBlank
+    @Size(max = 24)
+    private String type;
+    private String typeId;
+    private String subType;
 
     @NotBlank
     @Size(max = 128)
@@ -26,16 +43,8 @@ public class Property {
 
     @NotBlank
     @Size(max = 24)
-    private String status;
-
-    @NotBlank
-    @Size(max = 24)
-    private String type;
-
-
-    @NotBlank
-    @Size(max = 24)
     private String location;
+    private String locationId;
 
     @NotNull
     private Integer bedroom;
@@ -43,19 +52,12 @@ public class Property {
     private Double sqFt;
     private Double sqMt;
 
-    private String owner;
-    private String agent;
-    private String project;
-    private String tel;
-
     private List<String> features;
     private List<String> tags;
 
-    private String ownerId;
-    private String agentId;
-    private String projectId;
-    private String statusId;
-    private String typeId;
+    private Project project;
+    private Source assocWith;
+    private Source managedBy;
 
 
 

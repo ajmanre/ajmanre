@@ -220,9 +220,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Agency"
+                $ref: "#/components/schemas/AgencyPage"
   /agency/{agencyId}:
     get:
       tags:
@@ -242,9 +240,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Agency"
+                $ref: "#/components/schemas/Agency"
   /agency/{id}:
     put:
       tags:
@@ -264,6 +260,177 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/Agency"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /agent:
+    post:
+      tags:
+        - "agentAdd"
+      summary: "add agent"
+      operationId: "agentPost"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AgentRequest"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /agent/{page}/{size}:
+    get:
+      tags:
+        - "agentPageSize"
+      summary: "agent listing"
+      operationId: "agentPageSize"
+      parameters:
+        - in: path
+          name : page
+          schema:
+            type: integer
+            default: 1
+          required: true
+          description: "page no of the list pagination"
+        - in: path
+          name : size
+          schema:
+            type: integer
+            default: 5
+          required: true
+          description: "size of the pagination"
+      responses:
+        "200":
+          description: "agency pagination listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentPage"
+  /agent/{agentId}:
+    get:
+      tags:
+        - "agentId"
+      summary: "agent get"
+      operationId: "agentId"
+      parameters:
+        - in: path
+          name : agentId
+          schema:
+            type: string
+          required: true
+          description: "agent details by id"
+      responses:
+        "200":
+          description: "agent pagination listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Agent"
+  /agent/{id}:
+    put:
+      tags:
+        - "agentEdit"
+      summary: "edit agent"
+      operationId: "agentPut"
+      parameters:
+        - in: path
+          name : id
+          schema:
+            type: string
+          required: true
+          description: "update agent details by id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Agent"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /property:
+    post:
+      tags:
+        - "propertyAdd"
+      summary: "add property"
+      operationId: "propertyPost"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Property"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /property/retrieve:
+    get:
+      tags:
+        - "propertyRetrieve"
+      summary: "property retrieve"
+      operationId: "propertyRetrieve"
+      responses:
+        "200":
+          description: "agency pagination listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Property"
+  /property/{propertyId}:
+    get:
+      tags:
+        - "propertyId"
+      summary: "property get"
+      operationId: "propertyId"
+      parameters:
+        - in: path
+          name : propertyId
+          schema:
+            type: string
+          required: true
+          description: "property details by id"
+      responses:
+        "200":
+          description: "agent pagination listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/property"
+  /property/{id}:
+    put:
+      tags:
+        - "propertyEdit"
+      summary: "edit property"
+      operationId: "propertyPut"
+      parameters:
+        - in: path
+          name : id
+          schema:
+            type: string
+          required: true
+          description: "update property details by id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Property"
       responses:
         "200":
           description: "MessageResponse"
@@ -575,6 +742,9 @@ components:
       properties:
         id:
           type: "string"
+        updatedAt:
+          type: "string"
+          format: "date-time"
         name:
           type: "string"
         tel:
@@ -595,3 +765,183 @@ components:
           description: "contacts of agency"
           items:
             $ref: "#/components/schemas/Contact"
+    AgencyPage:
+      type: "object"
+      required:
+        - page
+        - page
+        - total
+      properties:
+        page:
+          type: integer
+          description: page no of data result in pagination
+        size:
+          type: integer
+          description: no of data elements in page
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Agency"
+          description: data elements list in page
+        total:
+          type: integer
+          description: total elements in the list
+    AgentRequest:
+      type: "object"
+      required:
+        - name
+      properties:
+        name:
+          type: "string"
+        serviceAreas:
+          type: "string"
+        specialties:
+          type: "string"
+          description: "agent specialties"
+        position:
+          type: "string"
+          description: "agent position"
+        license:
+          type: "string"
+          description: "agent position"
+        imageFile:
+          type: "string"
+          description: "uploaded file url"
+        address:
+          $ref: "#/components/schemas/Address"
+        contact:
+          $ref: "#/components/schemas/Contact"
+        agency:
+          $ref: "#/components/schemas/Source"
+    Agent:
+      type: "object"
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: "string"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+        name:
+          type: "string"
+        serviceAreas:
+          type: "string"
+        specialties:
+          type: "string"
+          description: "agent specialties"
+        position:
+          type: "string"
+          description: "agent position"
+        license:
+          type: "string"
+          description: "agent position"
+        imageFile:
+          type: "string"
+          description: "uploaded file url"
+        address:
+          $ref: "#/components/schemas/Address"
+        contact:
+          $ref: "#/components/schemas/Contact"
+        agency:
+          $ref: "#/components/schemas/Source"
+    AgentPage:
+      type: "object"
+      required:
+        - page
+        - size
+        - total
+      properties:
+        page:
+          type: integer
+          description: page no of data result in pagination
+        size:
+          type: integer
+          description: no of data elements in page
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Agent"
+          description: data elements list in page
+        total:
+          type: integer
+          description: total elements in the list
+    Source:
+      type: "object"
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: source identifier
+        name:
+          type: string
+          description: key value of the  source
+    Property:
+      type: "object"
+      required:
+        - id
+        - identifier
+        - summary
+      properties:
+        id:
+          type: string
+          description: source identifier
+        identifier:
+          type: string
+          description: unique identifer
+        summary:
+          type: string
+          description: propery summary
+        updatedAt:
+          type: "string"
+          format: "date-time"
+        status:
+          type: string
+        statusId:
+          type: string
+        type:
+          type: string
+        typeId:
+          type: string
+        subType:
+          type: string
+        location:
+          type: string
+        locationId:
+          type: string
+        bedroom:
+          type: integer
+        sqFt:
+          type: number
+          format: double
+        sqMt:
+          type: number
+          format: double
+        features:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        project:
+          $ref: "#/components/schemas/Project"
+        assocWith:
+          $ref: "#/components/schemas/Source"
+        managedBy:
+          $ref: "#/components/schemas/Source"
+    Project:
+      type: "object"
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: name of the project
+        overview:
+          type: string
+          description: project short overview

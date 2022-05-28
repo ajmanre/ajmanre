@@ -7,10 +7,14 @@ import org.openapitools.model.Select;
 import org.openapitools.model.SelectRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RestController
+@CrossOrigin("*")
 public class SelectController implements SelectApi {
 
     @Autowired
