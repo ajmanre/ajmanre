@@ -290,11 +290,6 @@ paths:
         - "agentAdd"
       summary: "add agent"
       operationId: "agentPost"
-      parameters:
-        - in: header
-          name: Authorization
-          schema:
-            type: string
       requestBody:
         required: true
         content:

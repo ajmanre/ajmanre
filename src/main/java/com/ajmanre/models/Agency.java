@@ -21,6 +21,8 @@ public class Agency {
     @NotNull
     private LocalDateTime updatedAt;
 
+    private boolean enabled;
+
     @NotBlank
     @Size(max = 128)
     private String name;
@@ -37,5 +39,7 @@ public class Agency {
     private List<Address> addresses;
 
     private List<Contact> contacts;
+
+    private Source user;
 
 }

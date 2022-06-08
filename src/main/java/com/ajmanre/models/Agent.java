@@ -2,6 +2,7 @@ package com.ajmanre.models;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Document(collection = "agents")
 public class Agent {
 
+    @Id
     private String id;
 
     private LocalDateTime updatedAt;
@@ -32,5 +34,9 @@ public class Agent {
     private Contact contact;
 
     private Source agency;
+
+    private Source user;
+
+    private Source createdBy;
 
 }

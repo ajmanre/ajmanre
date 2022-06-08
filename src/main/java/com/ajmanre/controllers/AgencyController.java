@@ -38,9 +38,9 @@ public class AgencyController implements AgencyApi {
         Page<com.ajmanre.models.Agency> pg = agencyService.getPage(page, size);
         if(null != pg.getContent() && !pg.getContent().isEmpty()) {
             List<Agency> agencies = pg.getContent().stream().map(this::toOut).collect(Collectors.toList());
-            return ResponseEntity.ok(new AgencyPage().page(page).size(pg.getSize()).data(agencies).total((int)pg.getTotalElements()));
+            return ResponseEntity.ok(new AgencyPage().page(page).size(pg.getSize()).data(agencies).total(pg.getTotalElements()));
         }
-        return ResponseEntity.ok(new AgencyPage().page(page).size(0).data(null).total(0));
+        return ResponseEntity.ok(new AgencyPage().page(page).size(0).data(null).total(0l));
     }
 
     @Override
@@ -151,5 +151,17 @@ public class AgencyController implements AgencyApi {
                 .name(agency.getName()).tel(agency.getTel())
                 .facebook(agency.getFacebook()).insta(agency.getInsta())
                 .adresses(addresses).contacts(contacts);
+    }
+
+    @Override
+    public ResponseEntity<List<Source>> agencySourceList() {
+
+        List<com.ajmanre.models.Source> srcs = agencyRepository.getAgencySource();
+        List<Source> sources = null;
+        if( null != srcs) {
+            sources = srcs.stream().map(s -> new Source().id(s.getId()).name(s.getName()))
+                    .collect(Collectors.toList());
+        }
+        return ResponseEntity.ok(sources);
     }
 }

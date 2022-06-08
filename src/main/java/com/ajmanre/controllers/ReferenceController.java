@@ -163,15 +163,16 @@ public class ReferenceController {
 
         if(key.equals("REF_SEL")) {
             Object[][] array = new Object[][]{
-                    {"Available", "Available", 0, "prop-status"},
-                    {"For Rent", "For Rent", 0, "prop-status"},
-                    {"For Sale", "For Sale", 0, "prop-status"},
-                    {"Foreclosures", "Foreclosures", 0, "prop-status"},
-                    {"New Costruction", "New Costruction", 0, "prop-status"},
-                    {"New Listing", "New Listing", 0, "prop-status"},
-                    {"Open House", "Open House", 0, "prop-status"},
-                    {"Reduced Price", "Reduced Price", 0, "prop-status"},
-                    {"Resale", "Resale", 0, "prop-status"}
+                    {"Available", "Available", 1, "prop-status"},
+                    {"For Rent", "For Rent", 2, "prop-status"},
+                    {"For Sale", "For Sale", 3, "prop-status"},
+                    {"Foreclosures", "Foreclosures", 4, "prop-status"},
+                    {"New Construction", "New Construction", 5, "prop-status"},
+                    {"New Listing", "New Listing", 6, "prop-status"},
+                    {"Open House", "Open House", 7, "prop-status"},
+                    {"Reduced Price", "Reduced Price", 8, "prop-status"},
+                    {"Resale", "Resale", 9, "prop-status"},
+                    {"Full Time", "Full Time", 1, "req-type"}
             };
 
             selectRepository.deleteAll();

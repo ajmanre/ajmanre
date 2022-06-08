@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 @Setter
 public class Source {
 
-    @Id
     private String id;
 
     @NotBlank

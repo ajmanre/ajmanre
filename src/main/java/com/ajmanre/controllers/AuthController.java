@@ -8,7 +8,11 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.ajmanre.repository.AgencyRepository;
+import com.ajmanre.repository.AgentRepository;
+import com.ajmanre.services.UserService;
 import org.openapitools.api.AuthApi;
+import org.openapitools.model.Source;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,6 +57,15 @@ public class AuthController implements AuthApi {
 	@Autowired
 	JwtUtils jwtUtils;
 
+	@Autowired
+	UserService userService;
+
+	@Autowired
+	AgentRepository agentRepository;
+
+	@Autowired
+	AgencyRepository agencyRepository;
+
 	@Override
 	public Optional<NativeWebRequest> getRequest() {
 		return AuthApi.super.getRequest();
@@ -72,13 +85,24 @@ public class AuthController implements AuthApi {
 				.map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
+		com.ajmanre.models.User user = userRepository.findByUsername(userDetails.getUsername()).get();
 		org.openapitools.model.JwtResponse jwtResponse = new org.openapitools.model.JwtResponse();
 		jwtResponse.setAccessToken(jwt);
 		jwtResponse.setType("Bearer");
 		jwtResponse.setId(userDetails.getId());
 		jwtResponse.setUsername(userDetails.getUsername());
+		jwtResponse.setName(user.getName());
 		jwtResponse.setEmail(userDetails.getEmail());
 		jwtResponse.setRoles(roles);
+
+		agentRepository.findByUserId(user.getId()).ifPresent(agent -> {
+			jwtResponse.setAgent(new Source().id(agent.getId()).name(agent.getName()));
+		});
+
+		agencyRepository.findByUserId(user.getId()).ifPresent(agency -> {
+			jwtResponse.setAgency(new Source().id(agency.getId()).name(agency.getName()));
+		});
+
 		return ResponseEntity.ok(jwtResponse);
 	}
 
@@ -105,6 +129,8 @@ public class AuthController implements AuthApi {
 				signupRequest.getEmail(),
 				encoder.encode(signupRequest.getPassword()));
 
+		user.setName(signupRequest.getName());
+		user.setEmail(signupRequest.getEmail());
 		List<String> strRoles = signupRequest.getRoles();
 		Set<Role> roles = new HashSet<>();
 
@@ -127,6 +153,17 @@ public class AuthController implements AuthApi {
 						roles.add(modRole);
 
 						break;
+					case "agency":
+						Role agencyRole = roleRepository.findByName(RoleEnum.ROLE_AGENCY)
+								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+						roles.add(agencyRole);
+
+						break;
+					case "owner":
+						Role ownRole = roleRepository.findByName(RoleEnum.ROLE_OWNER)
+								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+						roles.add(ownRole);
+						break;
 					default:
 						Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
 								.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
@@ -136,8 +173,14 @@ public class AuthController implements AuthApi {
 		}
 
 		user.setRoles(roles);
-		userRepository.save(user);
-		response.setMessage("User registered successfully!");
+		user = userRepository.save(user);
+		if(null != strRoles && strRoles.contains("agent")) {
+			userService.agentCreated(user);
+		} else if(null != strRoles && strRoles.contains("agency")) {
+			userService.agencyCreated(user, signupRequest.getAgencyName());
+		}
+
+		response.message("User registered successfully!").identifier(user.getId());
 		return ResponseEntity.ok(response);
 	}
 }

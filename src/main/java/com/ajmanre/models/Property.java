@@ -58,6 +58,7 @@ public class Property {
     private Project project;
     private Source assocWith;
     private Source managedBy;
+    private Source user;
 
 
 

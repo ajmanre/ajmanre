@@ -29,9 +29,9 @@ public class PropertyTypeService {
     public Map<String, List<PropertyType>> getPropTypes() {
         Map<String, List<PropertyType>> map =  propertyTypeRepository.findAll().stream()
             .collect(Collectors.groupingBy(
-                    PropertyType::getType,
-                    HashMap::new,
-                    Collectors.toCollection(ArrayList::new)
+                PropertyType::getType,
+                HashMap::new,
+                Collectors.toCollection(ArrayList::new)
             ));
         return map;
     }

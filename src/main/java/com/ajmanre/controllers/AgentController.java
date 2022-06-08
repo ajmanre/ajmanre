@@ -1,18 +1,28 @@
 package com.ajmanre.controllers;
 
+import com.ajmanre.models.Role;
+import com.ajmanre.models.RoleEnum;
+import com.ajmanre.models.User;
 import com.ajmanre.repository.AgentRepository;
+import com.ajmanre.repository.RoleRepository;
+import com.ajmanre.repository.UserRepository;
+import com.ajmanre.security.jwt.JwtUtils;
 import com.ajmanre.services.AgentService;
 import org.openapitools.api.AgentApi;
 import org.openapitools.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -24,6 +34,18 @@ public class AgentController implements AgentApi {
 
     @Autowired
     AgentService agentService;
+
+    @Autowired
+    JwtUtils jwtUtils;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    RoleRepository roleRepository;
+
+    @Autowired
+    PasswordEncoder encoder;
 
     @Override
     public ResponseEntity<Agent> agentId(String agentId) {
@@ -38,14 +60,63 @@ public class AgentController implements AgentApi {
         Page<com.ajmanre.models.Agent> pg = agentService.getPage(page, size);
         if(null != pg.getContent() && !pg.getContent().isEmpty()) {
             List<Agent> agents = pg.getContent().stream().map(this::toOut).collect(Collectors.toList());
-            return ResponseEntity.ok(new AgentPage().page(page).size(pg.getSize()).data(agents).total((int)pg.getTotalElements()));
+            return ResponseEntity.ok(new AgentPage().page(page).size(pg.getSize()).data(agents).total(pg.getTotalElements()));
         }
-        return ResponseEntity.ok(new AgentPage().page(page).size(0).data(null).total(0));
+        return ResponseEntity.ok(new AgentPage().page(page).size(0).data(null).total(0l));
     }
 
     @Override
-    public ResponseEntity<MessageResponse> agentPost(AgentRequest agentRequest) {
+    public ResponseEntity<MessageResponse> agentPost(AgentRequest agentRequest, String authorization) {
+
+        org.openapitools.model.MessageResponse response = new org.openapitools.model.MessageResponse();
+        if (userRepository.existsByUsername(agentRequest.getUsername())) {
+            response.setMessage("Error: Username is already taken!");
+            return ResponseEntity
+                    .badRequest()
+                    .body(response);
+        }
+
+        if (userRepository.existsByEmail(agentRequest.getEmail())) {
+            response.setMessage("Error: Email is already in use!");
+            return ResponseEntity
+                    .badRequest()
+                    .body(response);
+        }
+
+        // Create new user's account
+        User newUser = new User(agentRequest.getUsername(),
+                agentRequest.getEmail(),
+                encoder.encode(agentRequest.getPassword()));
+
+        newUser.setName(agentRequest.getName());
+        newUser.setEmail(agentRequest.getEmail());
+        Set<Role> roles = new HashSet<>();
+
+        Role modRole = roleRepository.findByName(RoleEnum.ROLE_AGENT)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        roles.add(modRole);
+
+        newUser.setRoles(roles);
+        newUser = userRepository.save(newUser);
+
+        com.ajmanre.models.Source agentUser = new com.ajmanre.models.Source();
+        agentUser.setId(newUser.getId());
+        agentUser.setName(newUser.getUsername());
+
         com.ajmanre.models.Agent agent = toModel(agentRequest);
+        agent.setUpdatedAt(LocalDateTime.now());
+        agent.setUser(agentUser);
+
+        com.ajmanre.models.Source user = null;
+        if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer ")) {
+            String jwt = authorization.substring(7, authorization.length());
+            final String username = jwtUtils.getUserNameFromJwtToken(jwt);
+            final String userId = jwtUtils.getUserIdFromJwtClaim(jwt);
+            user = new com.ajmanre.models.Source();
+            user.setId(userId);
+            user.setName(username);
+        }
+        agent.setCreatedBy(user);
         agent = agentRepository.save(agent);
         return ResponseEntity.ok(new MessageResponse()
                 .message("Agency created successfully")
@@ -93,6 +164,17 @@ public class AgentController implements AgentApi {
                 .identifier(saved.getId()));
     }
 
+    @Override
+    public ResponseEntity<List<Source>> agentSourceList() {
+        List<com.ajmanre.models.Source> srcs = agentRepository.getAgentSource();
+        List<Source> sources = null;
+        if( null != srcs) {
+            sources = srcs.stream().map(s -> new Source().id(s.getId()).name(s.getName()))
+                    .collect(Collectors.toList());
+        }
+        return ResponseEntity.ok(sources);
+    }
+
     private Agent toOut(com.ajmanre.models.Agent agent) {
 
 
@@ -131,6 +213,7 @@ public class AgentController implements AgentApi {
         agent.setUpdatedAt(LocalDateTime.now());
         agent.setName(agentRequest.getName());
         agent.setServiceAreas(agentRequest.getServiceAreas());
+        agent.setSpecialties(agentRequest.getSpecialties());
         agent.setPosition(agentRequest.getPosition());
         agent.setLicense(agentRequest.getLicense());
         agent.setImageFile(agentRequest.getImageFile());
