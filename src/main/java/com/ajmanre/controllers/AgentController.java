@@ -119,7 +119,7 @@ public class AgentController implements AgentApi {
         agent.setCreatedBy(user);
         agent = agentRepository.save(agent);
         return ResponseEntity.ok(new MessageResponse()
-                .message("Agency created successfully")
+                .message("Agent created successfully")
                 .identifier(agent.getId()));
     }
 
@@ -179,7 +179,7 @@ public class AgentController implements AgentApi {
 
 
         Address address = null;
-        if(null != agent) {
+        if(null != agent.getAddress()) {
             com.ajmanre.models.Address addr = agent.getAddress();
             address = new Address().adressLine1(addr.getAdressLine1())
                     .adressLine2(addr.getAdressLine2()).area(addr.getArea())
@@ -248,5 +248,12 @@ public class AgentController implements AgentApi {
         }
 
         return agent;
+    }
+
+    @Override
+    public ResponseEntity<List<Agent>> agentByAgencyId(String agencyId) {
+        List<Agent> agencyAssociates = agentRepository.findByAgencyId(agencyId)
+            .stream().map(this::toOut).collect(Collectors.toList());
+        return ResponseEntity.ok(agencyAssociates);
     }
 }

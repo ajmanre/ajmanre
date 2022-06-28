@@ -1,5 +1,6 @@
 package com.ajmanre.controllers;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -97,6 +98,9 @@ public class AuthController implements AuthApi {
 
 		agentRepository.findByUserId(user.getId()).ifPresent(agent -> {
 			jwtResponse.setAgent(new Source().id(agent.getId()).name(agent.getName()));
+			if(null != agent.getAgency()) {
+				jwtResponse.setAgency(new Source().id(agent.getAgency().getId()).name(agent.getAgency().getName()));
+			}
 		});
 
 		agencyRepository.findByUserId(user.getId()).ifPresent(agency -> {
@@ -173,6 +177,7 @@ public class AuthController implements AuthApi {
 		}
 
 		user.setRoles(roles);
+		user.setUpdatedAt(LocalDateTime.now());
 		user = userRepository.save(user);
 		if(null != strRoles && strRoles.contains("agent")) {
 			userService.agentCreated(user);

@@ -2,6 +2,7 @@ package com.ajmanre.controllers;
 
 import com.ajmanre.models.LoadFile;
 import com.ajmanre.services.FileService;
+import org.openapitools.model.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +23,10 @@ public class FileController {
     private FileService fileService;
 
     @PostMapping("/upload")
-    public ResponseEntity<?> upload(@RequestParam("file")MultipartFile file) throws IOException {
-        return new ResponseEntity<>(fileService.addFile(file), HttpStatus.OK);
+    public ResponseEntity<MessageResponse> upload(@RequestParam("file")MultipartFile file) throws IOException {
+        return ResponseEntity.ok(new MessageResponse()
+                .message("File uploaded successfully")
+                .identifier(fileService.addFile(file)));
     }
 
     @GetMapping("/download/{id}")

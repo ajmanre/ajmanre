@@ -14,4 +14,6 @@ public interface AgentRepository extends MongoRepository<Agent, String> {
     List<Source> getAgentSource();
 
     Optional<Agent> findByUserId(String userId);
+
+    List<Agent> findByAgencyId(String agencyId);
 }

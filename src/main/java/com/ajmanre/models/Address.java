@@ -25,4 +25,7 @@ public class Address {
 
     @Size(max = 32)
     private String country;
+
+    @Size(max = 16)
+    private String zip;
 }

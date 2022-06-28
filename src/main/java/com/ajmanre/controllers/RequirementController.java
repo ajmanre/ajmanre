@@ -12,7 +12,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,8 +62,8 @@ public class RequirementController implements RequirementApi {
         }
 
         com.ajmanre.models.Requirement req = toModel(requirement, null);
-        req.setUpdatedAt(OffsetDateTime.now());
-        req.setPostedDate(OffsetDateTime.now());
+        req.setUpdatedAt(LocalDateTime.now());
+        req.setPostedDate(LocalDateTime.now());
         req.setPostedBy(user);
         req = requirementRepository.save(req);
 
@@ -77,7 +79,7 @@ public class RequirementController implements RequirementApi {
         });
 
         req = toModel(requirement, req);
-        req.setUpdatedAt(OffsetDateTime.now());
+        req.setUpdatedAt(LocalDateTime.now());
         req = requirementRepository.save(req);
 
         return ResponseEntity.ok(new MessageResponse()
@@ -95,9 +97,12 @@ public class RequirementController implements RequirementApi {
         requirement.setPhoneNo(req.getPhoneNo());
         requirement.setMessage(req.getMessage());
         requirement.setFeatured(req.getFeatured());
-        requirement.setListingExpDate(req.getListingExpDate());
-        requirement.setPostedDate(req.getPostedDate());
-
+        if(null != req.getListingExpDate()) {
+            requirement.setListingExpDate(req.getListingExpDate().toLocalDateTime());
+        }
+        if(null != req.getPostedDate()) {
+            requirement.setPostedDate(req.getPostedDate().toLocalDateTime());
+        }
         if(req.getPostedBy() != null) {
             com.ajmanre.models.Source postedby = new com.ajmanre.models.Source();
             postedby.setId(req.getPostedBy().getId());
@@ -114,11 +119,25 @@ public class RequirementController implements RequirementApi {
             com.ajmanre.models.Source postBy = req.getPostedBy();
             postedBy = new Source().name(postBy.getName()).id(postBy.getId());
         }
+        OffsetDateTime updatedAt = null;
+        if(null != req.getUpdatedAt()) {
+            updatedAt = req.getUpdatedAt().atOffset(ZoneOffset.UTC);
+        }
 
-        return  new Requirement().id(req.getId()).updatedAt(req.getUpdatedAt())
+        OffsetDateTime listingExpDate = null;
+        if(null != req.getListingExpDate()) {
+            listingExpDate = req.getListingExpDate().atOffset(ZoneOffset.UTC);
+        }
+
+        OffsetDateTime postedDate = null;
+        if(null != req.getPostedDate()) {
+            postedDate = req.getPostedDate().atOffset(ZoneOffset.UTC);
+        }
+
+        return  new Requirement().id(req.getId()).updatedAt(updatedAt)
                 .name(req.getName()).email(req.getEmail()).phoneNo(req.getPhoneNo())
                 .whatsapp(req.getWhatsapp()).message(req.getMessage())
-                .featured(req.getFeatured()).listingExpDate(req.getListingExpDate())
-                .postedDate(req.getPostedDate()).postedBy(postedBy);
+                .featured(req.getFeatured()).listingExpDate(listingExpDate)
+                .postedDate(postedDate).postedBy(postedBy);
     }
 }

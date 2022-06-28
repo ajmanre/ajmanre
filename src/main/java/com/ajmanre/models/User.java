@@ -1,10 +1,12 @@
 package com.ajmanre.models;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.Getter;
@@ -19,6 +21,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
   @Id
   private String id;
+
+  @NotNull
+  private LocalDateTime updatedAt;
 
   @NotBlank
   @Size(max = 20)

@@ -59,9 +59,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 			.authorizeRequests().antMatchers("/auth/**").permitAll()
 			.antMatchers("/api/test/**", "/uploadfs/**", "/file/**", "/openapi.yaml",
-					"/openapi.json", "/redoc.html", "/swagger-ui/**", "/reference/**",
-					"/prop/type/hierarchy", "/area/all", "/select/**", "/agency/{\\d+}/{\\d+}",
-					"/agent/{\\d+}/{\\d+}", "/property/retrieve","/property/get/**").permitAll()
+				"/openapi.json", "/redoc.html", "/swagger-ui/**", "/reference/**",
+				"/prop/type/hierarchy", "/area/all", "/select/**", "/agency/{\\d+}/{\\d+}",
+				"/agent/{\\d+}/{\\d+}", "/property/retrieve","/property/get/**",
+				"/property/listing/*", "/requirement/**", "/lead").permitAll()
 			.anyRequest().authenticated();
 
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

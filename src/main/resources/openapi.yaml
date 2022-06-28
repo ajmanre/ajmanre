@@ -4,7 +4,15 @@ info:
   version: "1.0"
 servers:
   - url: http://localhost:{port}
-    description: The production API server
+    description: The local API server
+    variables:
+      port:
+        enum:
+          - '8443'
+          - '443'
+        default: '8443'
+  - url: https://angular.ajmanre.com:{port}
+    description: The local API server
     variables:
       port:
         enum:
@@ -397,6 +405,28 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Source"
+  /agent/by/{agencyId}:
+    get:
+      tags:
+        - "agentByAgencyId"
+      summary: "Agent By Agency Id"
+      operationId: "agentByAgencyId"
+      parameters:
+        - in: path
+          name : agencyId
+          schema:
+            type: string
+          required: true
+          description: "Agent By Agency Id"
+      responses:
+        "200":
+          description: "Agent By Agency Id"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Agent"
   /property:
     post:
       tags:
@@ -422,11 +452,17 @@ paths:
               schema:
                 $ref: "#/components/schemas/MessageResponse"
   /property/retrieve:
-    get:
+    post:
       tags:
         - "propertyRetrieve"
       summary: "property retrieve"
       operationId: "propertyRetrieve"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PropertySpec"
       responses:
         "200":
           description: "agency pagination listing"
@@ -480,6 +516,68 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/MessageResponse"
+  /property/my/listing:
+    get:
+      tags:
+        - "myPropListing"
+      summary: "my property posted by me list"
+      operationId: "myPropListing"
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "my property posted by me list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Property"
+  /property/agency/listing:
+    get:
+      tags:
+        - "agencyPropListing"
+      summary: "agency property posted by me list"
+      operationId: "agencyPropListing"
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+      responses:
+        "200":
+          description: "agency property posted by me list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Property"
+  /property/listing/{agencyId}:
+    get:
+      tags:
+        - "propListingByAgency"
+      summary: "property listing by agency"
+      operationId: "propListingByAgency"
+      parameters:
+        - in: path
+          name : agencyId
+          schema:
+            type: string
+          required: true
+          description: "property listing by agency id"
+      responses:
+        "200":
+          description: "agency property posted by me list"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Property"
   /requirement:
     post:
       tags:
@@ -571,6 +669,260 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/Requirement"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /user/{page}/{size}:
+    get:
+      tags:
+        - "userPageSize"
+      summary: "users listing"
+      operationId: "userPageSize"
+      parameters:
+        - in: path
+          name : page
+          schema:
+            type: integer
+            default: 1
+          required: true
+          description: "page no of the list pagination"
+        - in: path
+          name : size
+          schema:
+            type: integer
+            default: 5
+          required: true
+          description: "size of the pagination"
+      responses:
+        "200":
+          description: "users pagination listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserPage"
+  /user/all:
+    get:
+      tags:
+        - "userAll"
+      summary: "all users"
+      operationId: "userAll"
+      responses:
+        "200":
+          description: "user all"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+  /lead:
+    post:
+      tags:
+        - "leadAdd"
+      summary: "add lead"
+      operationId: "leadPost"
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Lead"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /lead/{page}/{size}:
+    get:
+      tags:
+        - "leadPageSize"
+      summary: "lead listing"
+      operationId: "leadPageSize"
+      parameters:
+        - in: path
+          name : page
+          schema:
+            type: integer
+            default: 1
+          required: true
+          description: "page no of the list pagination"
+        - in: path
+          name : size
+          schema:
+            type: integer
+            default: 5
+          required: true
+          description: "size of the pagination"
+      responses:
+        "200":
+          description: "lead pagination listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LeadPage"
+  /lead/{leadId}:
+    get:
+      tags:
+        - "leadId"
+      summary: "lead get"
+      operationId: "leadId"
+      parameters:
+        - in: path
+          name : leadId
+          schema:
+            type: string
+          required: true
+          description: "lead details by id"
+      responses:
+        "200":
+          description: "lead pagination listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Lead"
+  /lead/{id}:
+    put:
+      tags:
+        - "leadEdit"
+      summary: "edit lead"
+      operationId: "leadPut"
+      parameters:
+        - in: path
+          name : id
+          schema:
+            type: string
+          required: true
+          description: "update lead details by id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Lead"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /lead/all:
+    get:
+      tags:
+        - "leadAll"
+      summary: "all leads order by latest first"
+      operationId: "leadAll"
+      responses:
+        "200":
+          description: "lead all"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Lead"
+  /enquiry:
+    post:
+      tags:
+        - "enquiryAdd"
+      summary: "add enquiry"
+      operationId: "enquiryPost"
+      parameters:
+        - in: header
+          name: Authorization
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Enquiry"
+      responses:
+        "200":
+          description: "MessageResponse"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+  /enquiry/{page}/{size}:
+    get:
+      tags:
+        - "enquiryPageSize"
+      summary: "enquiry listing"
+      operationId: "enquiryPageSize"
+      parameters:
+        - in: path
+          name : page
+          schema:
+            type: integer
+            default: 1
+          required: true
+          description: "page no of the list pagination"
+        - in: path
+          name : size
+          schema:
+            type: integer
+            default: 5
+          required: true
+          description: "size of the pagination"
+      responses:
+        "200":
+          description: "lead pagination listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EnquiryPage"
+  /enquiry/{enquiryId}:
+    get:
+      tags:
+        - "enquiryId"
+      summary: "enquiry get"
+      operationId: "enquiryId"
+      parameters:
+        - in: path
+          name : enquiryId
+          schema:
+            type: string
+          required: true
+          description: "enquiry details by id"
+      responses:
+        "200":
+          description: "enquiry pagination listing"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Enquiry"
+  /enquiry/{id}:
+    put:
+      tags:
+        - "enquiryEdit"
+      summary: "enquiry edit"
+      operationId: "enquiryPut"
+      parameters:
+        - in: path
+          name : id
+          schema:
+            type: string
+          required: true
+          description: "update enquiry details by id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Enquiry"
       responses:
         "200":
           description: "MessageResponse"
@@ -880,6 +1232,8 @@ components:
           type: "string"
         country:
           type: "string"
+        zip:
+          type: "string"
     Contact:
       type: "object"
       required:
@@ -927,7 +1281,6 @@ components:
     AgencyPage:
       type: "object"
       required:
-        - page
         - page
         - total
       properties:
@@ -1057,52 +1410,143 @@ components:
       required:
         - id
         - identifier
-        - summary
+        - title
       properties:
         id:
           type: string
           description: source identifier
-        identifier:
-          type: string
-          description: unique identifer
-        summary:
-          type: string
-          description: propery summary
         updatedAt:
           type: "string"
           format: "date-time"
+        identifier:
+          type: string
+          description: unique identifer
+        title:
+          type: string
+          description: property title
+          example: 1BHK 2Baths
         status:
           type: string
+          example: Available
         statusId:
           type: string
+          example : xxxxxxxxxxxxxxxxxxxxxxxx
+        propFor:
+          type: string
+          example: Rent
+        propForId:
+          type: string
+          example : xxxxxxxxxxxxxxxxxxxxxxxx
         type:
           type: string
+          example : Residential
         typeId:
           type: string
+          example : xxxxxxxxxxxxxxxxxxxxxxxx
         subType:
           type: string
+          example : Apartment
+        rentingType:
+          type: string
+          example: Daily
+        rentingTypeId:
+          type: string
+          example : xxxxxxxxxxxxxxxxxxxxxxxx
         location:
           type: string
+          example : Al Jerf Industrial 3
         locationId:
           type: string
-        bedroom:
-          type: integer
-        sqFt:
-          type: number
-          format: double
-        sqMt:
-          type: number
-          format: double
-        features:
-          type: array
-          items:
-            type: string
+          example : xxxxxxxxxxxxxxxxxxxxxxxx
         tags:
           type: array
           items:
             type: string
+          example : ['RESALE']
+        description:
+          type: string
+          example : description for detailing the property
+        price:
+          type: number
+          format: double
+          description : Sale or Rent Price
+          example : 1.12
+        sqFt:
+          type: number
+          format: double
+          example : 430
+        sqMt:
+          type: number
+          format: double
+          example : 39.95
+        buildupArea:
+          type: number
+          format: double
+          example : 39.95
+        totalLandArea:
+          type: number
+          format: double
+          example : 39.95
+        bathrooms:
+          type: integer
+          example : 2
+        bedrooms:
+          type: integer
+          example : 1
+        yearBuilt:
+          type: string
+          example: 2016
+        rooms:
+          type: integer
+          example : 1
+        parking:
+          type: integer
+          example : 1
+        garage:
+          type: integer
+          example : 1
+        garageSize:
+          type: number
+          format: double
+          example : 100
+        availabilityDate:
+          type: "string"
+          format: "date-time"
+          example : 2022-06-09T00:00:00.00Z
+        features:
+          type: array
+          items:
+            type: string
+          example : ['READY TO MOVE']
+        genFeatures:
+          type: array
+          items:
+            type: string
+          example : ['Laundry Room']
+        nearby:
+          type: array
+          items:
+            type: string
+          example : ['Laundry Room']
+        tel:
+          type: string
+          example : 455467898
+        phoneNo:
+          type: string
+          example: 987655578
+        address:
+          $ref: "#/components/schemas/Address"
+        floorPlan:
+          $ref: "#/components/schemas/FloorPlan"
         project:
           $ref: "#/components/schemas/Project"
+        disclaimer:
+          type: string
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/Fileo"
+          description: files for property
         assocWith:
           $ref: "#/components/schemas/Source"
         managedBy:
@@ -1118,6 +1562,32 @@ components:
         overview:
           type: string
           description: project short overview
+    FloorPlan:
+      type: "object"
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          description: title of the floor
+        bedroom:
+          type: integer
+        bathroom:
+          type: integer
+        price:
+          type: number
+          format: double
+          description : Sale or Rent Price
+        postFixPrice:
+          type: string
+        planSize:
+          type: number
+          format: double
+        planImage:
+          $ref: "#/components/schemas/Fileo"
+        description:
+          type: string
+          description: floor short overview
     PropertyPage:
       type: "object"
       required:
@@ -1132,6 +1602,40 @@ components:
           type: integer
           format: int64
           description: total elements in the list
+    PropertySpec:
+      type: "object"
+      properties:
+        types:
+          type: array
+          items:
+            $ref: "#/components/schemas/TypeRel"
+          description: property types
+        statusIds:
+          type: "array"
+          description: "status ids"
+          items:
+            type: string
+        locationIds:
+          type: "array"
+          description: "location ids"
+          items:
+            type: string
+        bedroom:
+          type: integer
+          description: no of bedroom
+    TypeRel:
+      type: "object"
+      required:
+        - typeId
+        - type
+        - subType
+      properties:
+        typeId:
+          type: string
+        type:
+          type: string
+        subType:
+          type: string
     Requirement:
       type: "object"
       required:
@@ -1184,6 +1688,196 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Requirement"
+          description: data elements list in page
+        total:
+          type: integer
+          format: int64
+          description: total elements in the list
+    Fileo:
+      type: "object"
+      required:
+        - link
+      properties:
+        link:
+          type: string
+          description: downloadable link
+        name:
+          type: string
+          description: file name
+    UserPage:
+      type: "object"
+      required:
+        - page
+        - size
+        - total
+      properties:
+        page:
+          type: integer
+          description: page no of data result in pagination
+        size:
+          type: integer
+          description: no of data elements in page
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+          description: data elements list in page
+        total:
+          type: integer
+          format: int64
+          description: total elements in the list
+    User:
+      type: "object"
+      required:
+        - id
+        - updatedAt
+        - username
+        - password
+        - email
+        - name
+      properties:
+        id:
+          type: "string"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+        username:
+          type: "string"
+          description: "Username"
+        password:
+          type: "string"
+          description: "Password"
+        name:
+          type: "string"
+          description: "name"
+        email:
+          type: "string"
+          description: "email"
+        roles:
+          type: "array"
+          description: "roles, admin, agent, agency, user (individual), owner"
+          items:
+            type: string
+          example: ['admin', 'agent', 'agency', 'owner', 'user']
+    Lead:
+      type: "object"
+      required:
+        - type
+        - typeId
+        - phoneNo
+      properties:
+        id:
+          type: string
+          description: source identifier
+        updatedAt:
+          type: "string"
+          format: "date-time"
+        type:
+          type: string
+        typeId:
+          type: string
+        name:
+          type: string
+          description: name of the person who is inquiring
+        firstName:
+          type: string
+          description: first name of the person who is inquiring
+        lastName:
+          type: string
+          description: last name of the person who is inquiring
+        email:
+          type: string
+        phoneNo:
+          type: string
+    LeadPage:
+      type: "object"
+      required:
+        - page
+        - size
+        - total
+      properties:
+        page:
+          type: integer
+          description: page no of data result in pagination
+        size:
+          type: integer
+          description: no of data elements in page
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Lead"
+          description: data elements list in page
+        total:
+          type: integer
+          format: int64
+          description: total elements in the list
+    Enquiry:
+      type: "object"
+      required:
+        - contact
+        - propType
+        - propTypeId
+        - enqType
+        - enqTypeId
+      properties:
+        id:
+          type: string
+          description: source identifier
+        updatedAt:
+          type: "string"
+          format: "date-time"
+        contact:
+          $ref: "#/components/schemas/Contact"
+        enqType:
+          type: string
+        enqTypeId:
+          type: string
+        propType:
+          type: string
+        propTypeId:
+          type: string
+        priceFrom:
+          type: number
+          format: double
+        priceTo:
+          type: number
+          format: double
+        bedMin:
+          type: integer
+        bedMax:
+          type: integer
+        bathMin:
+          type: integer
+        bathMax:
+          type: integer
+        sqftMin:
+          type: number
+          format: double
+        sqftMax:
+          type: number
+          format: double
+        address:
+          $ref: "#/components/schemas/Address"
+        notes:
+          type: string
+          description: notes for the person who is inquiring
+    EnquiryPage:
+      type: "object"
+      required:
+        - page
+        - size
+        - total
+      properties:
+        page:
+          type: integer
+          description: page no of data result in pagination
+        size:
+          type: integer
+          description: no of data elements in page
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Enquiry"
           description: data elements list in page
         total:
           type: integer

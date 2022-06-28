@@ -10,4 +10,8 @@ public interface PropertyRepository extends MongoRepository<Property, String> {
 
     @Aggregation(pipeline = {"{ $sample: { size: 20 } }"})
     public List<Property> findRandomRecords();
+
+    public List<Property> findByAssocWithId(String id);
+
+    public List<Property> findByUserId(String id);
 }

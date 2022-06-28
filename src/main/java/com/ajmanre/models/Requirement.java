@@ -5,7 +5,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,7 +15,7 @@ public class Requirement {
     @Id
     private String id;
 
-    private OffsetDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
     private String name;
 
@@ -29,9 +29,9 @@ public class Requirement {
 
     private Boolean featured;
 
-    private OffsetDateTime listingExpDate;
+    private LocalDateTime listingExpDate;
 
-    private OffsetDateTime postedDate;
+    private LocalDateTime postedDate;
 
     private Source postedBy;
 }

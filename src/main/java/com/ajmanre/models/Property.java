@@ -3,6 +3,7 @@ package com.ajmanre.models;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
@@ -15,6 +16,9 @@ import java.util.List;
 @Setter
 @Document(collection = "properties")
 public class Property {
+
+    @Transient
+    public static final String SEQUENCE = "properties";
 
     @Id
     private String id;
@@ -31,6 +35,10 @@ public class Property {
     private String status;
     private String statusId;
 
+    @Size(max = 48)
+    private String propFor;
+    private String propForId;
+
     @NotBlank
     @Size(max = 24)
     private String type;
@@ -39,23 +47,54 @@ public class Property {
 
     @NotBlank
     @Size(max = 128)
-    private String summary;
+    private String title;
+
+    @Size(max = 48)
+    private String rentingType;
+    private String rentingTypeId;
 
     @NotBlank
     @Size(max = 24)
     private String location;
     private String locationId;
 
-    @NotNull
-    private Integer bedroom;
+    private String description;
 
+    private Double price;
     private Double sqFt;
     private Double sqMt;
 
+    private Double buildupArea;
+    private Double totalLandArea;
+
+    private Integer bathrooms;
+    private Integer bedrooms;
+    private String yearBuilt;
+    private Integer rooms;
+
+    private Integer parking;
+
+    private Integer garage;
+
+    private Double garageSize;
+
+    private LocalDateTime availabilityDate;
+
     private List<String> features;
+    private List<String> genFeatures;
+    private List<String> nearby;
     private List<String> tags;
+    private String tel;
+    private String phoneNo;
+
+    private Address address;
+
+    private FloorPlan floorPlan;
+
+    private String disclaimer;
 
     private Project project;
+    private List<File> files;
     private Source assocWith;
     private Source managedBy;
     private Source user;
