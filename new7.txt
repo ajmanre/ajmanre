@@ -1,0 +1,19 @@
+use ajmanredb
+db.createUser(
+  {
+    user: "root",
+    pwd: "example",
+    roles: [ { role: "readWrite", db: "ajmanredb" } ]
+  }
+)
+
+db.roles.insert({"name" : "ROLE_ADMIN"});
+db.roles.insert({"name" : "ROLE_USER"});
+db.roles.insert({"name" : "ROLE_AGENCY"});
+db.roles.insert({"name" : "ROLE_AGENT"});
+db.roles.insert({"name" : "ROLE_OWNER"});
+
+db.roles.find({})
+
+java -ja --spring.config.location=-Dspring.config.location=file:c:ajamnre\application.properties
+spring.data.mongodb.authentication-database=ajmanredb
