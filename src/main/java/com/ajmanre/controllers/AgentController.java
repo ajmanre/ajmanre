@@ -135,6 +135,8 @@ public class AgentController implements AgentApi {
         saved.setPosition(agent.getPosition());
         saved.setLicense(agent.getLicense());
         saved.setImageFile(agent.getImageFile());
+        saved.setLanguages(agent.getLangauges());
+        saved.setAbout(agent.getAbout());
 
         if(agent.getAddress() != null) {
             Address addr = agent.getAddress();
@@ -204,6 +206,7 @@ public class AgentController implements AgentApi {
                 .name(agent.getName()).serviceAreas(agent.getServiceAreas())
                 .specialties(agent.getSpecialties()).position(agent.getPosition())
                 .license(agent.getLicense()).imageFile(agent.getImageFile())
+                .langauges(agent.getLanguages()).about(agent.getAbout())
                 .address(address).contact(contact).agency(agency);
     }
 
@@ -217,6 +220,8 @@ public class AgentController implements AgentApi {
         agent.setPosition(agentRequest.getPosition());
         agent.setLicense(agentRequest.getLicense());
         agent.setImageFile(agentRequest.getImageFile());
+        agent.setLanguages(agentRequest.getLangauges());
+        agent.setAbout(agentRequest.getAbout());
 
         if(agentRequest.getAddress() != null) {
             Address addr = agentRequest.getAddress();

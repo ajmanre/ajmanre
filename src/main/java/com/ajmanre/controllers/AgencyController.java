@@ -1,5 +1,6 @@
 package com.ajmanre.controllers;
 
+import com.ajmanre.models.File;
 import com.ajmanre.repository.AgencyRepository;
 import com.ajmanre.services.AgencyService;
 import org.openapitools.api.AgencyApi;
@@ -51,6 +52,14 @@ public class AgencyController implements AgencyApi {
         agency.setTel(agencyRequest.getTel());
         agency.setFacebook(agencyRequest.getFacebook());
         agency.setInsta(agencyRequest.getInsta());
+        agency.setAbout(agencyRequest.getAbout());
+
+        if(agencyRequest.getImage() != null) {
+            File image = new File();
+            image.setName(agencyRequest.getImage().getName());
+            image.setLink(agencyRequest.getImage().getLink());
+            agency.setImage(image);
+        }
 
         if(agencyRequest.getAdresses() != null && !agencyRequest.getAdresses().isEmpty()) {
             List<com.ajmanre.models.Address> addresses = agencyRequest.getAdresses().stream().map(addr -> {
@@ -96,7 +105,14 @@ public class AgencyController implements AgencyApi {
         agency.setTel(agencyRequest.getTel());
         agency.setFacebook(agencyRequest.getFacebook());
         agency.setInsta(agencyRequest.getInsta());
+        agency.setAbout(agencyRequest.getAbout());
 
+        if(agencyRequest.getImage() != null) {
+            File image = new File();
+            image.setName(agencyRequest.getImage().getName());
+            image.setLink(agencyRequest.getImage().getLink());
+            agency.setImage(image);
+        }
         if(agencyRequest.getAdresses() != null && !agencyRequest.getAdresses().isEmpty()) {
             List<com.ajmanre.models.Address> addresses = agencyRequest.getAdresses().stream().map(addr -> {
                 com.ajmanre.models.Address address = new com.ajmanre.models.Address();
@@ -130,6 +146,11 @@ public class AgencyController implements AgencyApi {
 
     private Agency toOut(com.ajmanre.models.Agency agency) {
 
+        Fileo image = null;
+        if(agency.getImage() != null) {
+            image = new Fileo().name(agency.getImage().getName()).link(agency.getImage().getLink());
+        }
+
         List <Address> addresses = null;
         if(null != agency.getAddresses() && !agency.getAddresses().isEmpty()) {
             addresses = agency.getAddresses().stream().map(addr -> {
@@ -150,7 +171,7 @@ public class AgencyController implements AgencyApi {
         return new Agency().id(agency.getId()).updatedAt(agency.getUpdatedAt().atOffset(ZoneOffset.UTC))
                 .name(agency.getName()).tel(agency.getTel())
                 .facebook(agency.getFacebook()).insta(agency.getInsta())
-                .adresses(addresses).contacts(contacts);
+                .image(image).adresses(addresses).contacts(contacts);
     }
 
     @Override

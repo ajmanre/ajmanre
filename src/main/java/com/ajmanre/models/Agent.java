@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,6 +29,10 @@ public class Agent {
     private String license;
 
     private String imageFile;
+
+    private List<String> languages;
+
+    private String about;
 
     private Address address;
 

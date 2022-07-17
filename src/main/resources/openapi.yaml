@@ -1230,6 +1230,11 @@ components:
         insta:
           type: "string"
           description: "instagram profile id"
+        about:
+          type: string
+          example : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+        image:
+          $ref: "#/components/schemas/Fileo"
         adresses:
           type: "array"
           description: "addresses of agency"
@@ -1292,6 +1297,11 @@ components:
         insta:
           type: "string"
           description: "instagram profile id"
+        about:
+          type: string
+          example : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+        image:
+          $ref: "#/components/schemas/Fileo"
         adresses:
           type: "array"
           description: "addresses of agency"
@@ -1347,6 +1357,14 @@ components:
         imageFile:
           type: "string"
           description: "uploaded file url"
+        langauges:
+          type: array
+          items:
+            type: string
+          example : ['Arabic']
+        about:
+          type: string
+          example : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
         address:
           $ref: "#/components/schemas/Address"
         contact:
@@ -1389,6 +1407,14 @@ components:
         imageFile:
           type: "string"
           description: "uploaded file url"
+        langauges:
+          type: array
+          items:
+            type: string
+          example : ['Arabic']
+        about:
+          type: string
+          example : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
         address:
           $ref: "#/components/schemas/Address"
         contact:

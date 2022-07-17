@@ -36,6 +36,11 @@ public class Agency {
     @Size(max = 128)
     private String insta;
 
+    @Size(max = 1024)
+    private String about;
+
+    private File image;
+
     private List<Address> addresses;
 
     private List<Contact> contacts;
